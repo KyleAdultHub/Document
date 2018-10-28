@@ -2,7 +2,7 @@ Celery&flower 后台运行部署
 celery在后台运行
 在生产环境中，你可能希望在后台运行worker.下面的文档中有详细的介绍：daemonization tutorial.
 下面的脚本使用celery multi命令在后台启动一个或多个worker.
-$ celery multi start w1 -A proj -l info
+$ celery multi start w1 -A proj -l info 
 celery multi v4.0.0 (0today8)
 > Starting nodes...
 > w1.halcyon.local: OK

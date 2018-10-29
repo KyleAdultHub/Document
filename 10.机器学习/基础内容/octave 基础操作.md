@@ -9,7 +9,6 @@ tags:
 - octave
 toc: true
 typora-root-url: ..\..\..
-comments: true
 ---
 
 ## 基础功能命令

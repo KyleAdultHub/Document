@@ -8,7 +8,7 @@ tags:
 - 机器学习
 - octave
 toc: true
-typora-root-url: ..\..\..
+typora-root-url: ..\..
 ---
 
 ## 基础功能命令

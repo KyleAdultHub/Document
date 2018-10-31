@@ -7,7 +7,7 @@ categories:
 tags:
 - 博客
 toc: true
-typora-root-url: ..\..\..
+typora-root-url: ..\..
 ---
 
 #### 0.本博客的由来

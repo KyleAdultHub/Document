@@ -27,6 +27,8 @@ typora-root-url: ..\..\..
 
 [keras.models.Sequential](https://link.jianshu.com?t=https%3A%2F%2Fkeras.io%2Fmodels%2Fsequential%2F) 类是神经网络模型的封装容器。它会提供常见的函数，例如 `fit()`、`evaluate()` 和 `compile()`。我们将介绍这些函数（在碰到这些函数的时候）。我们开始研究模型的层级吧。
 
+<!-- more -->
+
 #### 层级
 
 Keras 层级就像神经网络层级。有完全连接的层级、最大池化层级和激活层级。你可以使用模型的 add() 函数添加层级。例如，简单的模型可以如下所示：

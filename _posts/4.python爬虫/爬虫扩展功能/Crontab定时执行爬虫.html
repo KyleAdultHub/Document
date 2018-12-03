@@ -1,0 +1,19 @@
+
+---
+title: Crontab定时执行爬虫
+date: "2016-12-25 22:00:00"
+categories:
+- python爬虫
+- 爬虫扩展功能
+tags:
+- 爬虫
+toc: true
+typora-root-url: ..\..\..
+---
+
+
+<html>
+<body>
+<div>
+<span><div><div><font style="font-size: 12pt;background-color: rgb(255, 250, 165);-evernote-highlight:true;"><span style="background-color: rgb(255, 250, 165); font-size: 12pt; color: rgb(50, 135, 18); font-weight: bold;-evernote-highlight:true;">Crontab的使用方法(ubuntu为例)</span></font></div><ul><li><div><font style="font-size: 9pt;"><span style="font-size: 9pt; font-weight: bold;">安装cron软件</span></font></div></li><ul><li><div><span style="font-size: 9pt;">apt-get  install  cron</span></div></li></ul></ul><div><ul><li><div><font style="font-size: 9pt;"><span style="font-size: 9pt; font-weight: bold;">编辑crontab定时执行命令</span></font></div></li><ul><li><div><span style="font-size: 9pt;">进入crontab编辑界面</span></div></li><ul><li><div><span style="font-size: 9pt;">crontab  -e    进入编辑界面</span></div></li><li><div><span style="font-size: 9pt;">crontab  -l     查看当前的定时任务</span></div></li><li><div><span style="font-size: 12px;">crontab -r    删除任务</span></div></li></ul><li><div><span style="font-size: 9pt;">编辑需要被定时执行的命令</span></div></li><ul><li><div><span style="font-size: 9pt;">编辑的格式</span></div></li><ul><li><div><span style="font-size: 9pt;">分(0-59)   小时(0-23)  日(1-31)   月(1-12)  星期(0-6)  命令(command)</span></div></li></ul><li><div><span style="font-size: 9pt;">示例</span></div></li><ul><li><div><span style="font-size: 9pt;">30  7  8  *  *  ls    指定每月的8日的7:30执行ls命令</span></div></li><li><div><span style="font-size: 9pt;">*/15  *  *  *  *  ls      每15分钟执行一次ls命令</span></div></li><li><div><span style="font-size: 9pt;">0  */2  *  *  *  ls     每隔两个小时执行一次ls</span></div></li></ul><li><div><span style="font-size: 9pt;">注意点</span></div></li><ul><li><div><span style="font-size: 9pt;">* /num 代表每隔多长时间的意思</span></div></li><li><div><span style="font-size: 9pt; line-height: 13.6px;">当一个位置使用每隔符号的时候，其前边的时间位置，不能为*</span></div></li><li><div><span style="font-size: 9pt;">星期中0表示周日</span></div></li></ul></ul></ul></ul></div><div><font style="font-size: 12pt;"><span style="font-size: 12pt; background-color: rgb(255, 250, 165); color: rgb(50, 135, 18); font-weight: bold;-evernote-highlight:true;">使用Crontab定时爬虫</span></font></div><div><ul><li><div><font style="font-size: 9pt;"><span style="font-size: 9pt; font-weight: bold;">编辑爬虫脚本</span></font></div></li><ul><li><div><span style="font-size: 12px;">先定义好爬虫的启动脚本， 以start.sh为例</span></div></li></ul><li><div><font style="font-size: 9pt;"><span style="font-size: 9pt; font-weight: bold; line-height: 13.6px;">给.sh文件添加可执行权限</span></font></div></li><ul><li><div><span style="font-size: 9pt; line-height: 13.6px;">chmod  +  start.sh</span></div></li></ul><li><div><font style="font-size: 9pt;"><span style="font-size: 9pt; font-weight: bold;">在crontab中编辑脚本文件执行时间</span></font></div></li><ul><li><div><span style="font-size: 9pt;">0  6   *  *  *  ${SPIDER_DIR}/start.sh &gt;&gt; /dev/null 2&gt;&amp;1</span></div></li></ul></ul></div><div><br/></div></div><div><br/></div></span>
+</div></body></html>

@@ -1,0 +1,18 @@
+---
+title: 滑动验证码识别
+date: "2017-05-04 23:00:00"
+categories:
+- python爬虫
+- 爬虫常见反反爬
+tags:
+- 爬虫
+- 反反爬
+toc: true
+typora-root-url: ..\..\..
+---
+
+<html>
+<body>
+<div>
+<span><div><div><font style="font-size: 14pt;"><span style="color: rgb(50, 135, 18); font-size: 14pt; font-weight: bold; background-color: rgb(255, 250, 165);-evernote-highlight:true;">极验三代验证码破解</span></font></div><ul><li><div><font style="font-size: 10pt;"><span style="font-size: 10pt; font-weight: bold;">破解思路</span></font></div></li><ul><li><div><span style="font-size: 9pt;">1.使用selenium的模拟点击和滑动等来实现破解</span></div></li><li><div><span style="font-size: 9pt;">2.首先寻找快速识别按钮，如果找到进行点击验证</span></div></li><li><div><span style="font-size: 9pt;">3.获取验证码的位置(4角坐标)</span></div></li><li><div><span style="font-size: 9pt;">4.对验证码进行局域截图</span></div></li><li><div><span style="font-size: 9pt;">5.点击滑块获取第二张的验证码缺口图片</span></div></li><li><div><span style="font-size: 9pt;">6.遍历每一个像素点的位置，寻找缺口位置</span></div></li><li><div><span style="font-size: 9pt;">7.构造运动轨迹，要注意避免规则的运动轨迹被识别出是人工构造轨迹</span></div></li><li><div><span style="font-size: 9pt;">8.获取运动轨迹，并进行滑动</span></div></li></ul><li><div><font style="font-size: 10pt;"><span style="font-size: 10pt; font-weight: bold;">示例代码</span></font></div></li><ul><li><div><span style="font-size: 9pt;"><a href="/e_img/滑动验证码识别_files/crack.py"><img src="/e_img/滑动验证码识别_files/4ee2594fb3d097359ca3b5c0ee0d4504.png" alt="crack.py"></a></span></div></li></ul></ul><div><font style="background-color: rgb(255, 250, 165); font-size: 14pt;-evernote-highlight:true;"><span style="background-color: rgb(255, 250, 165); color: rgb(50, 135, 18); font-size: 14pt; font-weight: bold;-evernote-highlight:true;">微博九宫格验证码识别</span></font></div><ul><li><div><font style="font-size: 10pt;"><span style="font-size: 10pt; font-weight: bold;">破解思路</span></font></div></li><ul><li><div><span style="font-size: 9pt;">1.使用selenium的模拟点击和滑动来实现破解</span></div></li><li><div><span style="font-size: 9pt;">2.首先获取页面的验证码图片</span></div></li><li><div><span style="font-size: 9pt;">3.获取图片根据所有可能的滑动轨迹模板库的图片进行对比，获取正确的滑动顺序</span></div></li><li><div><span style="font-size: 9pt;">4.根据得到的拖动顺序，对其进行拖动</span></div></li></ul><li><div><font style="font-size: 10pt;"><span style="font-size: 10pt; font-weight: bold;">示例代码</span></font></div></li><ul><li><div><span style="font-size: 9pt;"><a href="滑动验证码识别_files/crack.py"><img src="/e_img/滑动验证码识别_files/b03b62326c1552af5aa0fd7ece52893c.png" alt="crack.py"></a></span></div></li></ul></ul><div><br/></div></div><div><br/></div></span>
+</div></body></html>

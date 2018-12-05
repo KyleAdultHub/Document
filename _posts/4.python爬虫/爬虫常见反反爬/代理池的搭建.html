@@ -1,0 +1,18 @@
+---
+title: 代理池的搭建
+date: "2017-05-08 23:00:00"
+categories:
+- python爬虫
+- 爬虫常见反反爬
+tags:
+- 爬虫
+- 反反爬
+toc: true
+typora-root-url: ..\..\..
+---
+
+<html>
+<body>
+<div>
+<span><div><div><font style="color: rgb(50, 135, 18); font-size: 14pt;"><b style="background-color: rgb(255, 250, 165);-evernote-highlight:true;">代理池的介绍</b></font></div><ul><li><div><font style="font-size: 10pt;"><b>应用模块</b></font></div></li><ul><li><div><font style="font-size: 9pt;">aiohttp、requests、redis-py、pyquery、Flask</font></div></li></ul><li><div><font style="font-size: 10pt;"><b>代理池模块</b></font></div></li><ul><li><div><font style="font-size: 9pt;">存储模块、获取代理模块、检测模块、接口模块、调度模块</font></div></li></ul><li><div><font style="font-size: 10pt;"><b>各模块的功能</b></font></div></li><ul><li><div><font style="font-size: 9pt;">存储模块</font></div></li><ul><li><div><font style="font-size: 9pt;">负责存储抓取下来的代理，并对代理去重</font></div></li></ul><li><div><font style="font-size: 9pt;">获取模块</font></div></li><ul><li><div><font style="font-size: 9pt;">需要定时抓取代理，代理可以是免费抓取的代理，也可以是调用付费代理商购买的代理</font></div></li></ul><li><div><font style="font-size: 9pt;">检测模块</font></div></li><ul><li><div><font style="font-size: 9pt;">需要定时检测数据库中的代理，对效果不好的代理及时进行删除</font></div></li></ul><li><div><font style="font-size: 9pt;">接口模块</font></div></li><ul><li><div><font style="font-size: 9pt;">需要用API来提供对外的服务接口。外界通过访问接口的方式来获取代理</font></div></li></ul><li><div><font style="font-size: 9pt;">调度模块</font></div></li><ul><li><div><font style="font-size: 9pt;">调度前面的所有模块，使之协调工作</font></div></li></ul></ul></ul><div><font style="color: rgb(50, 135, 18); font-size: 14pt;"><b style="background-color: rgb(255, 250, 165);-evernote-highlight:true;">各模块的设计</b></font></div><ul><li><div><font style="font-size: 10pt;"><b>存储模块</b></font></div></li><ul><li><div><font style="font-size: 9pt;">使用Redis有序集合，集合的每一个元素都是不重复的</font></div></li><li><div><font style="font-size: 9pt;">每个元素都有一个分数字段，分数是可以重复的，数值小的排在前面，数值大的排在后面</font></div></li><li><div><font style="font-size: 9pt;">每个代理100分为最高分，表示可用，0分为最低分，代表最不可用，自动进行移除</font></div></li><li><div><font style="font-size: 9pt;">获取随机代理的逻辑，先随机获取最高分代理，如果不存在最高分代理，按照排名获取</font></div></li></ul><li><div><font style="font-size: 10pt;"><b>获取模块</b></font></div></li><ul><li><div><font style="font-size: 9pt;">从各代理商处爬取或购买调用接口获得代理</font></div></li><li><div><font style="font-size: 9pt;">调用存储模块，向数据库中添加代理，初始的分数是10</font></div></li></ul><li><div><font style="font-size: 10pt;"><b>检测模块</b></font></div></li><ul><li><div><font style="font-size: 9pt;">不断的检测代理的可用性(检测的目标网站可以自定义)，进行代理的加分和减分或者移除</font></div></li><li><div><font style="font-size: 9pt;">检测到代理可用，分数立即置为100分，检测到代理请求失败，则减少一分</font></div></li></ul><li><div><font style="font-size: 10pt;"><b>接口模块</b></font></div></li><ul><li><div><font style="font-size: 9pt;">定义接口模块的随机获取代理，统计代理数量等方法</font></div></li></ul><li><div><font style="font-size: 10pt;"><b>调度模块</b></font></div></li><ul><li><div><font style="font-size: 9pt;">通过配置每个模块的开关来设置调度模块的启动功能</font></div></li><li><div><font style="font-size: 9pt;">通过多进程启动每一个模块</font></div></li></ul></ul><div><font style="font-size: 14pt; color: rgb(50, 135, 18);"><b style="background-color: rgb(255, 250, 165);-evernote-highlight:true;">代码示例</b></font></div><ul><li><div><font style="font-size: 9pt;"><a href="/e_img/代理池的搭建_files/ProxyPool.zip"><img src="/e_img/代理池的搭建_files/0a665021e169ae5031cba9011bfeca1e.png" alt="ProxyPool.zip"></a></font></div></li></ul><div><font style="font-size: 9pt;"><br/></font></div></div><div><br/></div></span>
+</div></body></html>

@@ -1,6 +1,6 @@
 ---
 title: 搭建Registry 私有库
-date: "2018-10-17 19:23:11"
+date: "2018-09-17 19:23:11"
 categories:
 - Docker容器技术
 - Docker

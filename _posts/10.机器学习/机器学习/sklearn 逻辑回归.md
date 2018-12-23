@@ -7,6 +7,8 @@ categories:
 tags:
 - sklearn
 - 逻辑回归
+- 监督学习
+- 机器学习
 toc: true
 typora-root-url: ..\..\..
 ---

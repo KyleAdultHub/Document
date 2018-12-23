@@ -7,8 +7,11 @@ categories:
 tags:
 - sklearn
 - 线型回归
+- 监督学习
+- 机器学习
 toc: true
 typora-root-url: ..\..\..
+
 ---
 
 ## 简单线性回归

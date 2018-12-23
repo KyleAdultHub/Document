@@ -7,6 +7,7 @@ categories:
 tags:
 - 非监督学习
 - PCA
+- 机器学习
 toc: true
 typora-root-url: ..\..\..
 ---

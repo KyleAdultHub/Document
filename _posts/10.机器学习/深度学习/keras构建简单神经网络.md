@@ -6,6 +6,8 @@ categories:
 - 深度学习
 tags:
 - keras
+- 机器学习
+- 深度学习
 - 神经网络
 toc: true
 typora-root-url: ..\..\..

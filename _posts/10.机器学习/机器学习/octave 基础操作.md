@@ -3,7 +3,7 @@ title: Octave基础操作
 date: "2018-10-26 00:01:00"
 categories:
 - 机器学习
-- 基础内容
+- 机器学习
 tags:
 - 机器学习
 - octave

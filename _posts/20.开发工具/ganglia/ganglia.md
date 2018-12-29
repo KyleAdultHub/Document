@@ -1,6 +1,6 @@
 
 ---
-title: Git-远程仓库管理
+title: Ganglia的安装、配置、运行
 date: "2018-10-09 22:00:00"
 categories:
 - 开发工具

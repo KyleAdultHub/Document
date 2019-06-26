@@ -1,4 +1,3 @@
-
 ---
 title: Ganglia的安装、配置、运行
 date: "2018-10-09 22:00:00"
@@ -6,9 +5,9 @@ categories:
 - 开发工具
 - ganglia
 tags:
-- git
+- ganglia
 toc: ganglia
-typora-root-url: ..\..\..
+typora-root-url: ..\..\..\
 ---
 
 

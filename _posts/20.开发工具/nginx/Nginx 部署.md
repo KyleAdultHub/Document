@@ -382,7 +382,21 @@ gzip_vary on; #varyheader支持，改选项可以让前端的缓存服务器缓�
 **优化方式**
 
 ```shell
+gzip on;
 
+gzip_min_length 2k;
+
+gzip_buffers 4 32k;
+
+gzip_http_version 1.1;
+
+gzip_comp_level 6;
+
+gzip_typestext/plain text/css text/javascriptapplication/json application/javascript application/x-javascriptapplication/xml;
+
+gzip_vary on;
+
+gzip_proxied any;
 ```
 
 #### 使用缓存来优化效率

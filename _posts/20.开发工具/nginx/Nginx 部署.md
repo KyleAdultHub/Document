@@ -5,8 +5,8 @@ categories:
 - 开发工具
 - nginx
 tags:
-- nginx
-toc: ganglia
+- true
+toc: true
 typora-root-url: ..\..\..\
 ---
 

@@ -5,8 +5,8 @@ categories:
 - 开发工具
 - ganglia
 tags:
-- ganglia
-toc: ganglia
+- true
+toc: true
 typora-root-url: ..\..\..\
 ---
 

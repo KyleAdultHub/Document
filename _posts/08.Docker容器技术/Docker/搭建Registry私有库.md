@@ -111,7 +111,7 @@ ubuntu 14.04 a5a467fddcb8 6 days ago 187.9 MB
 **查询镜像库中的镜像**
 
 ```shell
-http://10.0.110.218:5000/v2/_catalog
+http://127.0.0.1:5000/v2/_catalog
 ```
 
 ### 5.错误排查
@@ -121,9 +121,9 @@ http://10.0.110.218:5000/v2/_catalog
 在push 到docker registry时，可能会报错：
 
 ```
-The push refers to a repository [192.168.1.100:5000/registry]
+The push refers to a repository [127.0.0.1:5000/registry]
 
-Get https://192.168.1.100:5000/v1/_ping: http: server gave HTTP response to HTTPS client
+Get https://127.0.0.1:5000/v1/_ping: http: server gave HTTP response to HTTPS client
 ```
 
 这个问题可能是由于客户端采用https，docker registry未采用https服务所致。一种处理方式是把客户对地址“192.168.1.100:5000”请求改为http。

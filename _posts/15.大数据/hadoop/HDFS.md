@@ -6,6 +6,7 @@ categories:
 - hadoop
 tags:
 - 大数据
+- HADOOP
 toc: true
 typora-root-url: ..\..\..
 ---
@@ -118,6 +119,8 @@ hdfs oiv -i fsimage_0000000000000000087 -p XML -o fsimage.xml
 
 ### 元数据的checkpoint
 
+由于在数据备份的时候会占用计算资源，所以为了减轻namenode的负载，通常可以将数据备份的工作交给另外一个专门用来做数据备份的namenode--> sencondary namenode
+
 每隔一段时间，会由secondary namenode 将namenode上积累的所有edits和一个最新的fsimage下载到本地(只有第一次merge才会下载fsimage)，并加载到内存进行merge(这个过程称之为checkpoint)
 
 ![1577693922715](/img/1577693922715.png)
@@ -130,7 +133,7 @@ hdfs oiv -i fsimage_0000000000000000087 -p XML -o fsimage.xml
 
 **如果namenode的硬盘损坏，元数据是否能回复，能恢复多少?**
 
-可以恢复最后一次merge之前的数据， 只需要将namenode的数据目录替换成namenode的数据目录
+可以恢复最后一次merge之前的数据， 只需要将secondarynamenode的数据目录替换成namenode的数据目录
 
 **配置namenode的工作目录时，有哪些可以注意的事项**
 

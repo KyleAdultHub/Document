@@ -3,7 +3,7 @@ title: zookeeper
 date: "2019-12-21 14:00:00"
 categories:
 - 大数据
-- 大数据工具
+- 大数据集群工具
 tags:
 - 大数据
 toc: true

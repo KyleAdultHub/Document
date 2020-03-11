@@ -161,7 +161,7 @@ maptask的并行度决定map阶段的任务处理并发度，进而影响到整�
   解决办法:
 
   	 1. 从源头上解决问题，文件合并后再上传处理
-    	 2. 可以用另外一种InputFormat:  CombineInputFormat（可以将多个文件划分到一个切片中）, 可以设置每个技巧篇的最小容量和最大容量;
+2. 可以用另外一种InputFormat:  CombineInputFormat（可以将多个文件划分到一个切片中）, 可以设置每个技巧篇的最小容量和最大容量;
 
 #### MAPTASK 并行度建议设置
 
@@ -822,7 +822,7 @@ public class LogEnhancerOutputFormat extends FileOutputFormat<Text, NullWritable
 //job.setOutputFormatClass(LogEnhancerOutputFormat.class);
 ```
 
-### OutputFormat类
+### IutputFormat类
 
 #### 作用
 
@@ -852,7 +852,7 @@ public class LogEnhancerOutputFormat extends FileOutputFormat<Text, NullWritable
 
 改写RecordReader，实现一次读取一个完整文件封装为KV
 
-在输出时使用SequenceFileOutPutFormat输出合并文件
+再输出时使用SequenceFileOutPutFormat输出合并文件
 
 IutputFormat类
 

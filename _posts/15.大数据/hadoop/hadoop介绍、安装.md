@@ -3,7 +3,7 @@ title: hadoop 介绍、安装
 date: "2019-12-29 14:00:00"
 categories:
 - 大数据
-- hadoop
+- HADOOP
 tags:
 - 大数据
 - HADOOP

@@ -148,6 +148,47 @@ http {
 }
 ```
 
+### Nginx Location 配置讲解
+
+#### Nginx Location 指令语法
+
+如下就是常用的 location 配置的语法格式,其中`modifier`是可选的,`location_match`就是制定 URI 应该去往哪个配置的关键.
+
+```
+location optional_modifier location_match {
+ . . .
+}
+复制代码
+```
+
+[Regular expressions(RE)](https://en.wikipedia.org/wiki/Regular_expression)或者字面量都可以用来定义`modifier`,如果 location 配置中制定了modifier,可能会改变 nginx匹配 location的方式,如下介绍几种最重要的modifier:
+
+- **(none)** 完全没有modifier表示 location会解释为前缀匹配,要确定匹配项，将根据从URI的开头匹配该location.
+- **=** 等号表示当前这个 location 会匹配一个确定的请求,配置什么就匹配什么请求,如果匹配上了,就会停止搜索.
+- **~** 波浪号表示当前这个 location 会当成一个大小写敏感的RE匹配.
+- **~\*** 波浪号跟星号标识 location 会按照大小写不敏感的 RE 匹配.
+- **^~** 非表达式(RE)匹配,正则表达式将不会生效.
+
+#### Ngnix Location的匹配顺序
+
+对于每个请求来说,nginx 会选择最匹配的一个 location 来处理这个请求,nginx 其实就是通过对比这些 location 规则来选择一个 location,对比的顺序可以总结为:
+
+1. 首先匹配前缀匹配(没有 RE 表达式),针对当前这个请求,每个前缀匹配都匹配一遍.
+
+2. 搜索`=`匹配,如果当前请求匹配上了,搜索将会停止,直接使用这个这个 location.
+
+3. 如果第二步没有匹配上,nginx 会按照如下步骤继续搜索最长前缀匹配:
+
+   如果最长前缀匹配有`^~`这个modifier,nginx 会停止搜索并直接使用这个 location
+
+   如果没有使用 `^~`,暂存这个 location并且继续搜索.
+
+4. 只要最长前缀匹配被暂存和选中,nginx 就会看当前的 location 是否有大小写敏感的 RE(`~`和`~*`),第一个匹配上这种会被当做有效的 location来处理这个请求.
+
+5. 如果没有 RE 的 location 匹配上,前面暂存的 location 就会被选中来处理这个请求.
+
+> 注:所以 没有修饰符的 location 其实是很浪费资源的,可以用 ^~ 来替代.
+
 ### Nginx 优化配置项
 
 #### 进程数优化

@@ -3,7 +3,7 @@ title: hadoop HA高可用
 date: "2020-01-17 11:00:00"
 categories:
 - 大数据
-- hadoop
+- HADOOP
 tags:
 - 大数据
 - HADOOP

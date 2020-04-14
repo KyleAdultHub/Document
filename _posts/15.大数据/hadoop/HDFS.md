@@ -3,7 +3,7 @@ title: HDFS
 date: "2019-12-30 14:00:00"
 categories:
 - 大数据
-- hadoop
+- HADOOP
 tags:
 - 大数据
 - HADOOP

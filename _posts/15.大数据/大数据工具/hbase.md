@@ -41,14 +41,12 @@ HBASE是Google Bigtable的开源实现，但是也有很多不同之处。比如
 ### hbase 集群中的角色
 
 1. 一个或者多个主节点，Hmaster
-
    - 管理用户对Table表的增、删、改、查操作；
    - 管理HRegion服务器的负载均衡，调整HRegion分布；
    - 在HRegion分裂后，负责新HRegion的分配；
    - 在HRegion服务器停机后，负责失效HRegion服务器上的HRegion迁移。
 
-   2、多个从节点，HregionServer
-
+2. 多个从节点，HregionServer
    - 表的增删改查数据。
    - 和hdfs交互，存取数据。
 
@@ -57,6 +55,8 @@ HBASE是Google Bigtable的开源实现，但是也有很多不同之处。比如
 1.  保存Hmaster的地址和backup-master地址
 2.  保存表-ROOT-的地址- hbase默认的根表，检索表。
 3.  HRegionServer列表
+
+
 
 ## hbase的安装
 
@@ -818,45 +818,75 @@ public class HBaseMr {
 
 ![1582433726696](/img/1582433726696.png)
 
+
+
+### 存储原理
+
+1. HBase中的每张表都通过行键按照一定的范围被分割成多个子表（HRegion），默认一个HRegion超过256M就要被分割成两个，由HRegionServer管理，管理哪些HRegion由HMaster分配。
+
+2. HRegionServer存取一个子表时，会创建一个HRegion对象，表的Region信息存在.meta表中，该表信息可通过Zookeeper进行追踪。然后对表的每个列族(Column Family)创建一个Store实例，每个Store都会有0个或多个StoreFile与之对应，每个StoreFile都会对应一个HFile， HFile就是实际的存储文件。因此，一个HRegion有多少个列族就有多少个Store。另外，每个HRegion还拥有一个MemStore实例。memStore存储在内存中，StoreFile存储在HDFS上。
+
+3. Region虽然是分布式存储的最小单元，但并不是存储的最小单元。Region由一个或者多个Store组成，每个store保存一个columns family；
+
+4. 本质上MemStore就是一个内存里放着一个保存KEY/VALUE的MAP，当MemStore（默认64MB）写满之后，会开始刷磁盘操作。
+
+5. 在进行表增加时，会先写memStore，当memStore文件大小达到一定大小时，会flush到StoreFile中。当Region中的StoreFile文件过多时，会进行Compact操作，将StoreFile合并。
+
 ### 写流程
 
-1、 client向hregionserver发送写请求。
+ZooKeeper---meta--regionserver--Hlog|MemStore--storefile
 
-2、 hregionserver将数据写到hlog（write ahead log）。为了数据的持久化和恢复。
+1、 通过zookeeper的-ROOT-  找到表 .META. 对应的hregionserver。
 
-3、 hregionserver将数据写到内存（memstore）
+2、通过META表rowkey，表名等信息找到数据对应的regine。
 
-4、 反馈client写成功。
+3、通过zookerpeer 的信息找到对应的regioneserver。
+
+4、 hregionserver将数据写到hlog（write ahead log）。为了数据的持久化和恢复。
+
+5、 hregionserver将数据写到内存（memstore）
+
+6、 反馈client写成功。
 
 ### 数据flush过程
 
-1、 当memstore数据达到阈值（默认是64M），将数据刷到硬盘，将内存中的数据删除，同时删除Hlog中的历史数据。
+1、 当memstore数据达到阈值（默认是64M），将内存中的数据删除。
 
-2、 并将数据存储到hdfs中。
+2、 将数据刷到硬盘(storefile文件)。
 
-3、 在hlog中做标记点。
+3、将内存中数据删除
+
+4、删除Hlog中的历史数据，并在hlog中做标记点。
 
 ### 数据合并过程
 
-1、 当数据块达到4块，hmaster将数据块加载到本地，进行合并
+1、 当storefile数据块达到4块，hmaster将数据块加载到本地，进行合并
 
 2、 当合并的数据超过256M，进行拆分，将拆分后的region分配给不同的hregionserver管理
 
 3、 当hregionser宕机后，将hregionserver上的hlog拆分，然后分配给不同的hregionserver加载，修改.META.	
 
-4、 注意：hlog会同步到hdfs
+4、 注意：hlog会同步到hdfs做持久化
 
 ### hbase 读流程
 
-1、 通过zookeeper和-ROOT- .META.表定位hregionserver。
+ZooKeeper---meta--regionserver--region--memstore--storefile
 
-2、 数据从内存和硬盘合并后返回给client
+1、 通过zookeeper的-ROOT-  找到表 .META. 对应的hregionserver。
 
-3、 数据块会缓存
+2、通过META表rowkey，表名等信息找到数据对应的regine。
+
+3、通过zookerpeer 的信息找到对应的regioneserver。
+
+4、连接到对应regineserver上的regine。
+
+5、先从Memstore找数据，如果没有，再到StoreFile上读
+
+6、 数据块会缓存
 
 ### hmaster的职责
 
-1、管理用户对Table的增、删、改、查操作； 
+1、管理用户对Table的增、删、改、查操作 (维护表对应的meta表地址，regine 和 regineserver之间的关系等)； 
 
 2、记录region在哪台Hregion server上
 

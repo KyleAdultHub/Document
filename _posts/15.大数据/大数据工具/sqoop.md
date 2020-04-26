@@ -123,7 +123,7 @@ sqoop import (generic-args) (import-args)
 **命令示例**
 
 ```shell
-sqoop import --connectjdbc:mysql://192.168.81.176/hivemeta2db --username root -password passwd --table sds
+sqoop import --connect jdbc:mysql://192.168.81.176/hivemeta2db --username root -password passwd --table sds
 ```
 - 默认目录是/user/\${user.name}/\${tablename}，可以通过--target-dir设置hdfs上的目标目录。
 - 可以通过--m设置并行数据，即map的数据，决定文件的个数。
@@ -240,7 +240,7 @@ sqoop job --create myimportjob -- import --connectjdbc:mysql://192.168.81.176/hi
 **查看job**
 
 ```shell
-
+sqoop job --list
 ```
 
 **检查job**

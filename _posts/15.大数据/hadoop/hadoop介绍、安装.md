@@ -97,7 +97,7 @@ HADOOP集群具体来说包含两个集群：HDFS集群和YARN集群，两者逻
 
 负责海量数据运算时的资源调度，集群中的角色主要有 ResourceManager /NodeManager
 
-**mapredice**：
+**Mapreduce**：
 
 它其实是一个应用程序开发包)
 
@@ -177,9 +177,9 @@ Centos  6.5  64bit
 配置环境变量 /etc/profile， 添加
 
 ```shell
-export JAVA_HOME=/usr/local/java/jdk1.8.0_141
-export JRE_HOME=${JAVA_HOME}/jre 
-export CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib 
+export  JAVA_HOME=/usr/local/java/jdk1.8.0_141
+export  JRE_HOME=${JAVA_HOME}/jre 
+export  CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib 
 export  PATH=${JAVA_HOME}/bin:$PATH
 ```
 
@@ -187,11 +187,11 @@ export  PATH=${JAVA_HOME}/bin:$PATH
 
 1. **上传安装包并解压**
 
-   - 上传hadoop安装包, 并解压到一个自定义目录（该安装包通过编译生成，编译方法参考**hadoop编译**）
+    上传hadoop安装包, 并解压到一个自定义目录（该安装包通过编译生成，编译方法参考**hadoop编译**）
 
-     ```shell
-     tar -xzvf hadoop-2.6.1.tar.gz -C /home/hadoop/apps
-     ```
+   ```shell
+   tar -xzvf hadoop-2.6.1.tar.gz -C /home/hadoop/apps
+   ```
 
 2. **修改配置文件**
 
@@ -248,7 +248,7 @@ export  PATH=${JAVA_HOME}/bin:$PATH
    </configuration>
    ```
 
-   **mapreduce.framework.name**  mapreduce计算框架相关配置
+   **mapred-site.xml**  mapreduce计算框架相关配置
 
    配置使用的资源调度工具配置等
 
@@ -293,9 +293,9 @@ export  PATH=${JAVA_HOME}/bin:$PATH
 
    格式化的作用是初始化namenode 的工作目录
 
-```shell
-bin/hadoop  namenode  -format
-```
+   ```shell
+   bin/hadoop  namenode  -format
+   ```
 
 ​	**启动HDFS和YARN**
 

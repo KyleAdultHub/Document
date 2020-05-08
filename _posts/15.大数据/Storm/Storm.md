@@ -326,7 +326,7 @@ tail -100f /export/servers/storm/logs/worker-6702.log
 
 ## Storm流式计算生命周期
 
-### 介绍
+**介绍**
 
 storm 执行流式数据处理函数的生命周期主要是通过Spout和Bolt 这两个组件的生命周期
 
@@ -363,9 +363,9 @@ storm 执行流式数据处理函数的生命周期主要是通过Spout和Bolt �
 
 6. Blot 中 execute  不断的循环执行
 
-### Stream Grouping
+## Stream Grouping
 
-#### Stream Grouping 的作用
+### Stream Grouping 的作用
 
 Storm 的Tuple  从 Spout 中 分发到 Bolt， 以及从Bolt 分发的Bolt 的过程中，Storm定义了一些内置的分发方法和规则，
 
@@ -386,7 +386,7 @@ Storm 的Tuple  从 Spout 中 分发到 Bolt， 以及从Bolt 分发的Bolt 的�
 
 - Direct Grouping： 直接分组， 这是一种比较特别的分组方法，用这种分组意味着消息的发送者指定由消息接收者的哪个task处理这个消息。只有被声明为Direct Stream的消息流可以声明这种分组方法。而且这种消息tuple必须使用emitDirect方法来发射。消息处理者可以通过TopologyContext来获取处理它的消息的task的id （OutputCollector.emit方法也会返回task的id）。
 
-> Local or shuffle grouping：如果目标bolt有一个或者多个task在同一个工作进程中，tuple将会被随机发生给这些tasks。否则，和普通的Shuffle Grouping行为一致。
+- Local or shuffle grouping：如果目标bolt有一个或者多个task在同一个工作进程中，tuple将会被随机发生给这些tasks。否则，和普通的Shuffle Grouping行为一致。
 
 ### 单体统计案例
 
@@ -394,7 +394,7 @@ Storm 的Tuple  从 Spout 中 分发到 Bolt， 以及从Bolt 分发的Bolt 的�
 
 设计一个topology，来实现对文档里面的单词出现的频率进行统计。
 
-整个topology分为三个部分：
+整个topology分为三个部分
 
 - RandomSentenceSpout：数据源，在已知的英文句子中，随机发送一条句子出去。
 

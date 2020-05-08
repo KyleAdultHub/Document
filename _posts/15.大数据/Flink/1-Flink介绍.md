@@ -146,8 +146,6 @@ Flink 的所有组件都基于 Actor System 来进行通讯。Actor system是多
 
 ![1586489825589](/img/1586489825589.png)
 
-提供DataStream API和DataSet API
-
 ## 六、Flink 的优点
 
 最后基于上面的介绍，来总结一下 Flink 的优点：

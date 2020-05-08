@@ -25,7 +25,7 @@ typora-root-url: ..\..\..
 
 #### 重点概念
 
-文件切块， 副本存放， 原数据管理
+文件切块， 副本存放， 元数据管理
 
 ### HDFS的概念和特性
 
@@ -64,9 +64,9 @@ typora-root-url: ..\..\..
 2. namenode返回是否可以上传
 3. client请求第一个 block该传输到哪些datanode服务器上
 4. namenode返回可以上传的节点, 示例3个datanode服务器ABC
-5. client请求3台dn中的一台A上传数据（本质上是一个RPC调用，建立pipeline），A收到请求会继续调用B，然后B调用C，将真个pipeline建立完成，逐级返回客户端
+5. client请求3台dn中的一台A上传数据（本质上是一个RPC调用，建立pipeline），A收到请求会继续调用B，然后B调用C，将整个pipeline建立完成，逐级返回客户端
 6. client开始往A上传第一个block（先从磁盘读取数据放到一个本地内存缓存），以packet为单位(chunk为校验单位)，A收到一个packet就会传给B，B传给C；A每传一个packet会放入一个应答队列等待应答
-7. 当一个block传输完成之后，client再次请求namenode上传第二个block的服务器。
+7. 当一个block传输完成之后(只要有一个节点上传成功，就算成功)，client再次请求namenode上传第二个block的服务器。
 
 ### HDFS读数据流程
 
@@ -96,19 +96,19 @@ typora-root-url: ..\..\..
 
 - 元数据的管理（查询，修改）
 
-### 原数据管理形式
+### 元数据管理形式
 
 - 内存元数据(NameSystem)
 - 磁盘元数据镜像文件(fsimage)
 - 数据操作日志文件（edits文件， 可通过日志运算出元数据）
 
-### 原数据的存储机制
+### 元数据的存储机制
 
 1. 内存中有一份完整的原数据(内存metadate)
 2. 磁盘中有一个"准完整"的原数据镜像(fsimage)文件(在namenode的工作目录中)
 3. 用于衔接metadata和持久化元数据镜像的fsimage之间的操作日志(edits文件), 当客户端对hdfs中的文件进行新增或者修改操作，操作记录会首先被记录到edits日志文件中，当客户端操作成功后，相应的原数据会更新到内存meta.data中， 并且每隔一定的间隔hdfs会将当前的metadata同步到fsimage镜像文件中
 
-### 原数据手动查看
+### 元数据手动查看
 
 hdfs命令
 
@@ -253,7 +253,7 @@ edits: 元数据的滚动日志文件，每次merge之后会对之前的日志�
 ### DATANODE 工作职责
 
 - 存储管理用户的文件块数据
-- 定期向namenode汇报自身所持有的block信息(通过心跳上报)， 当集群中的节点失效，或者block存在丢失的时候，集群可以根据汇报信息回复block初始副本数量的问题
+- 定期向namenode汇报自身所持有的block信息(通过心跳上报)， 当集群中的节点失效，或者block存在丢失的时候，集群可以根据汇报信息恢复block初始副本数量的问题
 
 ### DATANODE 汇报间隔设置参数
 

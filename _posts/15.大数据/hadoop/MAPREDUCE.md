@@ -161,7 +161,7 @@ maptask的并行度决定map阶段的任务处理并发度，进而影响到整�
   解决办法:
 
   	 1. 从源头上解决问题，文件合并后再上传处理
-2. 可以用另外一种InputFormat:  CombineInputFormat（可以将多个文件划分到一个切片中）, 可以设置每个技巧篇的最小容量和最大容量;
+2. 可以用另外一种InputFormat:  CombineInputFormat（可以将多个文件划分到一个切片中）, 可以设置每个切片的最小容量和最大容量;
 
 #### MAPTASK 并行度建议设置
 
@@ -597,9 +597,7 @@ public class ProvincePartitioner extends Partitioner<Text, FlowBean> {
 
 combiner是MR程序中Mapper和Reducer之外的一种组件, combiner组件的父类就是Reducer
 
-combiner和reducer的区别在于运行的位置：Combiner是在每一个maptask所在的节点运行, Reducer是接收全局所有Mapper的
-
-输出结果；
+combiner和reducer的区别在于运行的位置：Combiner是在每一个maptask所在的节点运行, Reducer是接收全局所有Mapper的输出结果；
 
 combiner的意义就是对每一个maptask的输出进行局部汇总，以减小网络传输量
 

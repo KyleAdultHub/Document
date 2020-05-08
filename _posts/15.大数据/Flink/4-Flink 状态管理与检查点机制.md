@@ -57,7 +57,7 @@ public class ThresholdWarning extends
     // 触发报警的次数
     private Integer numberOfTimes;
 
-    ThresholdWarning(Long threshold, Integer numberOfTimes) {
+    public void ThresholdWarning(Long threshold, Integer numberOfTimes) {
         this.threshold = threshold;
         this.numberOfTimes = numberOfTimes;
     }
@@ -149,7 +149,7 @@ Tuple2<String, List<Tuple2<String, Long>>>> implements CheckpointedFunction {
     // 次数
     private Integer numberOfTimes;
 
-    ThresholdWarning(Long threshold, Integer numberOfTimes) {
+    public void ThresholdWarning(Long threshold, Integer numberOfTimes) {
         this.threshold = threshold;
         this.numberOfTimes = numberOfTimes;
         this.bufferedData = new ArrayList<>();
@@ -182,7 +182,7 @@ Tuple2<String, List<Tuple2<String, Long>>>> implements CheckpointedFunction {
         if (bufferedData.size() >= numberOfTimes) {
              // 顺便输出状态实例的hashcode
              out.collect(Tuple2.of(checkPointedState.hashCode() + "阈值警报！", bufferedData));
-            bufferedData.clear();
+             bufferedData.clear();
         }
     }
 

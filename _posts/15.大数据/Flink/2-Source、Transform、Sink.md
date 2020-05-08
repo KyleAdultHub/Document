@@ -195,7 +195,7 @@ ParallelSourceFunction 直接继承自 ParallelSourceFunction，具有并行度�
 | flink-connector-kafka-0.11_2.11 | 1.4.0 +    | FlinkKafkaConsumer011 <br/>FlinkKafkaProducer011 | 0.11.x     |
 | flink-connector-kafka_2.11      | 1.7.0 +    | FlinkKafkaConsumer <br/>FlinkKafkaProducer       | >= 1.0.0   |
 
-这里我使用的 Kafka 版本为 kafka_2.12-2.2.0，添加的依赖如下：
+这里我使用的 Kafka 版本为 kafka_2.12-2.2.0，添加的依赖如下： 
 
 ```xml
 <dependency>
@@ -381,7 +381,7 @@ keyedStream.maxBy("key");
 
 ```
 
-### 2.6 Union [DataStream* → DataStream]
+### 2.6 Union [DataStream → DataStream]
 
 用于连接两个或者多个元素类型相同的 DataStream 。当然一个 DataStream 也可以与其本生进行连接，此时该 DataStream 中的每个元素都会被获取两次：
 
@@ -610,29 +610,7 @@ public DataStreamSink<T> writeAsText(String path, WriteMode writeMode) {
 streamSource.writeToSocket("192.168.0.226", 9999, new SimpleStringSchema());
 ```
 
-## 二、Streaming Connectors
-
-除了上述 API 外，Flink 中还内置了系列的 Connectors 连接器，用于将计算结果输入到常用的存储系统或者消息中间件中，具体如下：
-
-- Apache Kafka (支持 source 和 sink)
-- Apache Cassandra (sink)
-- Amazon Kinesis Streams (source/sink)
-- Elasticsearch (sink)
-- Hadoop FileSystem (sink)
-- RabbitMQ (source/sink)
-- Apache NiFi (source/sink)
-- Google PubSub (source/sink)
-
-除了内置的连接器外，你还可以通过 Apache Bahir 的连接器扩展 Flink。Apache Bahir 旨在为分布式数据分析系统 (如 Spark，Flink) 等提供功能上的扩展，当前其支持的与 Flink Sink 相关的连接器如下：
-
-- Apache ActiveMQ (source/sink)
-- Apache Flume (sink)
-- Redis (sink)
-- Akka (sink)
-
-这里接着在 Data Sources 章节介绍的整合 Kafka Source 的基础上，将 Kafka Sink 也一并进行整合，具体步骤如下。
-
-## 三、整合 Kafka Sink
+## 二、整合 Kafka Sink
 
 ### 3.1 addSink
 
@@ -697,7 +675,7 @@ bin/kafka-console-consumer.sh --bootstrap-server hadoop001:9092 --topic flink-st
 
 可以看到 Kafka 生成者发出的数据已经被 Flink 程序正常接收到，并经过转换后又输出到 Kafka 对应的 Topic 上。
 
-## 四、自定义 Sink
+## 三、自定义 Sink
 
 除了使用内置的第三方连接器外，Flink 还支持使用自定义的 Sink 来满足多样化的输出需求。想要实现自定义的 Sink ，需要直接或者间接实现 SinkFunction 接口。通常情况下，我们都是实现其抽象类 RichSinkFunction，相比于 SinkFunction ，其提供了更多的与生命周期相关的方法。两者间的关系如下：
 
@@ -783,3 +761,24 @@ env.execute();
 
 数据库成功写入，代表自定义 Sink 整合成功。
 
+## Streaming Connectors
+
+除了上述 API 外，Flink 中还内置了系列的 Connectors 连接器，用于将计算结果输入到常用的存储系统或者消息中间件中，具体如下：
+
+- Apache Kafka (支持 source 和 sink)
+- Apache Cassandra (sink)
+- Amazon Kinesis Streams (source/sink)
+- Elasticsearch (sink)
+- Hadoop FileSystem (sink)
+- RabbitMQ (source/sink)
+- Apache NiFi (source/sink)
+- Google PubSub (source/sink)
+
+除了内置的连接器外，你还可以通过 Apache Bahir 的连接器扩展 Flink。Apache Bahir 旨在为分布式数据分析系统 (如 Spark，Flink) 等提供功能上的扩展，当前其支持的与 Flink Sink 相关的连接器如下：
+
+- Apache ActiveMQ (source/sink)
+- Apache Flume (sink)
+- Redis (sink)
+- Akka (sink)
+
+这里接着在 Data Sources 章节介绍的整合 Kafka Source 的基础上，将 Kafka Sink 也一并进行整合，具体步骤如下。

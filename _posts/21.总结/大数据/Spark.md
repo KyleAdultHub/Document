@@ -38,7 +38,7 @@ $jar [args]
 
 RDD和它依赖的父RDD（s）的关系有两种不同的类型，即窄依赖（narrow dependency）和宽依赖（wide dependency）。
 
-![1588062543122](/source/img/1588062543122.png)
+![1588062543122](/img/1588062543122.png)
 
 ####  窄依赖
 
@@ -62,7 +62,7 @@ Spark速度非常快的原因之一，就是在不同操作中可以在内存中
 
 RDD通过persist方法或cache方法可以将前面的计算结果缓存，但是并不是这两个方法被调用时立即缓存，而是触发后面的action时，该RDD将会被缓存在计算节点的内存中，并供后面重用。
 
-![1588063966651](/source/img/1588063966651.png)
+![1588063966651](/img/1588063966651.png)
 
 缓存有可能丢失，或者存储存储于内存的数据由于内存不足而被删除，RDD的缓存容错机制保证了即使缓存丢失也能保证计算的正确执行。通过基于RDD的一系列转换，丢失的数据会被重算，由于RDD的各个Partition是相对独立的，因此只需要计算丢失的部分即可，并不需要重算全部Partition。
 
@@ -70,7 +70,7 @@ RDD通过persist方法或cache方法可以将前面的计算结果缓存，但�
 
 DAG(Directed Acyclic Graph)叫做有向无环图，原始的RDD通过一系列的转换就就形成了DAG，根据RDD之间的依赖关系的不同将DAG划分成不同的Stage，对于窄依赖，partition的转换处理在Stage中完成计算。对于宽依赖，由于有Shuffle的存在，只能在parent RDD处理完成后，才能开始接下来的计算，因此宽依赖是划分Stage的依据。
 
-![1588064038664](/source/img/1588064038664.png)
+![1588064038664](/img/1588064038664.png)
 
 ### Spark 中的checkpoint
 
@@ -104,7 +104,7 @@ Q4：实际过程中，使用RDD做checkpoint的时候需要注意什么问题�
 
 弄清楚了以上四个问题，我想对checkpoint的写过程也就基本清楚了。接下来将一一回答上面提出的问题。
 
-A1：首先看一下RDD中checkpoint方法，可以看到在该方法中是只是新建了一个ReliableRDDCheckpintData的对象，并没有做实际的写入工作。实际触发写入的时机是在runJob生成改RDD后，调用RDD的doCheckpoint方法来做的。
+A1：首先看一下RDD中checkpoint方法，可以看到在该方法中是只是新建了一个ReliableRDDCheckpintData的对象，并没有做实际的写入工作。实际触发写入的时机是在runJob生成该RDD后，调用RDD的doCheckpoint方法来做的。
 
 A2：在经历调用RDD.doCheckpoint → RDDCheckpintData.checkpoint → ReliableRDDCheckpintData.doCheckpoint → ReliableRDDCheckpintData.writeRDDToCheckpointDirectory后，在writeRDDToCheckpointDirectory方法中可以看到：将作为一个单独的任务（RunJob）将RDD中每个parition的数据依次写入到checkpoint目录（writePartitionToCheckpointFile），此外如果该RDD中的partitioner如果不为空，则也会将该对象序列化后存储到checkpoint目录。所以，在做checkpoint的时候，写入的hdfs中的数据主要包括：RDD中每个parition的实际数据，以及可能的partitioner对象（writePartitionerToCheckpointDir）。
 
@@ -153,7 +153,7 @@ A4：通过A1，A2可以知道，在RDD计算完毕后，会再次通过RunJob�
 
 DAG的生成 => stage切分 => task的生成 => 任务提交
 
-![1585970735319](/source/img/1585970735319.png)
+![1585970735319](/img/1585970735319.png)
 
 1. 构建DAG
    用户提交的job将首先被转换成一系列RDD并通过RDD之间的依赖关系构建DAG,然后将DAG提交到调度系统；
@@ -187,7 +187,7 @@ DAG的生成 => stage切分 => task的生成 => 任务提交
 
 ### Spark stage 切分流程
 
-![1585970495777](/source/img/1585970495777.png)
+![1585970495777](/img/1585970495777.png)
 
 #### 划分stage 的思路
 
@@ -199,11 +199,11 @@ shuffle个复杂是业务逻辑（将多台机器上具有相同属性的数据�
 
 ### Spark Driver  给Executor 提交task 时序图
 
-![1585970924876](/source/img/1585970924876.png)
+![1585970924876](/img/1585970924876.png)
 
 ### Spark Executor 启动和任务接受和执行时序图
 
-![1585970969792](/source/img/1585970969792.png)
+![1585970969792](/img/1585970969792.png)
 
 ## Spark Shuffle
 
@@ -217,7 +217,7 @@ shuffle个复杂是业务逻辑（将多台机器上具有相同属性的数据�
 
 #### 没有优化之前的HashShuffle机制
 
-![1586768469257](/source/img/1586768469257.png)
+![1586768469257](/img/1586768469257.png)
 
 1. 在HashShuffle没有优化之前，每一个ShufflleMapTask会为每一个ReduceTask创建一个bucket缓存，并且会为每一个bucket创建一个文件。这个bucket存放的数据就是经过Partitioner操作(默认是HashPartitioner)之后找到对应的bucket然后放进去，最后将数据刷新bucket缓存的数据到磁盘上，即对应的block file.
 2. 然后ShuffleMapTask将输出作为MapStatus发送到DAGScheduler的MapOutputTrackerMaster，每一个MapStatus包含了每一个ResultTask要拉取的数据的位置和大小
@@ -228,13 +228,13 @@ shuffle个复杂是业务逻辑（将多台机器上具有相同属性的数据�
 
 如上图所示：在这里有1个worker，2个executor，每一个executor运行2个ShuffleMapTask，有三个ReduceTask，所以总共就有4 * 3=12个bucket和12个block file。
 
-如果数据量较大，将会生成M*R个小文件，比如ShuffleMapTask有100个，ResultTask有100个，这就会产生100*100=10000个小文件
+如果数据量较大，将会生成M*R个小文件，比如ShuffleMapTask有100个，ResultTask有100个，这就会产生100\*100=10000个小文件
 
 bucket缓存很重要，需要将ShuffleMapTask所有数据都写入bucket，才会刷到磁盘，那么如果Map端数据过多，这就很容易造成内存溢出，尽管后面有优化，bucket写入的数据达到刷新到磁盘的阀值之后，就会将数据一点一点的刷新到磁盘，但是这样磁盘I/O就多了
 
 #### 优化后的HashShuffle
 
-![1586768527736](/source/img/1586768527736.png)
+![1586768527736](/img/1586768527736.png)
 
 1. 每一个Executor进程根据核数，决定Task的并发数量，比如executor核数是2，就是可以并发运行两个task，如果是一个则只能运行一个task
 
@@ -263,7 +263,7 @@ bucket缓存很重要，需要将ShuffleMapTask所有数据都写入bucket，才
 
 为了缓解Shuffle过程产生文件数过多和Writer缓存开销过大的问题，spark引入了类似于hadoop Map-Reduce的shuffle机制。该机制每一个ShuffleMapTask不会为后续的任务创建单独的文件，而是会将所有的Task结果写入同一个文件，并且对应生成一个索引文件。以前的数据是放在内存缓存中，等到数据完了再刷到磁盘，现在为了减少内存的使用，在内存不够用的时候，可以将输出溢写到磁盘，结束的时候，再将这些不同的文件联合内存的数据一起进行归并，从而减少内存的使用量。一方面文件数量显著减少，另一方面减少Writer缓存所占用的内存大小，而且同时避免GC的风险和频率。
 
-![1586768569212](/source/img/1586768569212.png)
+![1586768569212](/img/1586768569212.png)
 
 Sort-Based Shuffle有几种不同的策略：**BypassMergeSortShuffleWriter、SortShuffleWriter和UnasfeSortShuffleWriter。**
 

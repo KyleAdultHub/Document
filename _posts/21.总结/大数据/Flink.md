@@ -13,7 +13,7 @@ typora-root-url: ..\..\..
 
 Flink 采用分层的架构设计，从而保证各层在功能和职责上的清晰。如下图所示，由上而下分别是 API & Libraries 层、Runtime 核心层以及物理部署层：
 
-![1586404760423](/source/img/1586404760423.png)
+![1586404760423](/img/1586404760423.png)
 
 #### API & Libraries 层
 
@@ -32,13 +32,13 @@ Flink 的物理部署层，用于支持在不同平台上部署运行 Flink 应�
 
 主要涉及了Flink的部署模式，Flink支持多种部署模式：本地、集群（Standalone/YARN）、云（GCE/EC2）
 
-![1586489584052](/source/img/1586489584052.png)
+![1586489584052](/img/1586489584052.png)
 
 ### Flink 分层 API
 
 在上面介绍的 API & Libraries 这一层，Flink 又进行了更为具体的划分。具体如下：
 
-![1586404927178](/source/img/1586404927178.png)
+![1586404927178](/img/1586404927178.png)
 
 按照如上的层次结构，API 的一致性由下至上依次递增，接口的表现能力由下至上依次递减，各层的核心功能如下：
 
@@ -68,7 +68,7 @@ Stateful Stream Processing 是最低级别的抽象，它通过 Process Function
 - **ResourceManager** ：负责管理 slots 并协调集群资源。ResourceManager 接收来自 JobManager 的资源请求，并将存在空闲 slots 的 TaskManagers 分配给 JobManager 执行任务。Flink 基于不同的部署平台，如 YARN , Mesos，K8s 等提供了不同的资源管理器，当 TaskManagers 没有足够的 slots 来执行任务时，它会向第三方平台发起会话来请求额外的资源。
 - **TaskManagers** (也称为 *workers*) : TaskManagers 负责实际的子任务 (subtasks) 的执行，每个 TaskManagers 都拥有一定数量的 slots。Slot 是一组固定大小的资源的合集 (如计算能力，存储空间)。TaskManagers 启动后，会将其所拥有的 slots 注册到 ResourceManager 上，由 ResourceManager 进行统一管理。
 
-![1586410450743](/source/img/1586410450743.png)
+![1586410450743](/img/1586410450743.png)
 
 #### Task & SubTask
 
@@ -76,7 +76,7 @@ Stateful Stream Processing 是最低级别的抽象，它通过 Process Function
 
 在执行分布式计算时，Flink 将可以链接的操作 (operators) 链接到一起，这就是 Task。之所以这样做， 是为了减少线程间切换和缓冲而导致的开销，在降低延迟的同时可以提高整体的吞吐量。 但不是所有的 operator 都可以被链接，如下 keyBy 等操作会导致网络 shuffle 和重分区，因此其就不能被链接，只能被单独作为一个 Task。  简单来说，一个 Task 就是一个可以链接的最小的操作链 (Operator Chains) 。如下图，source 和 map 算子被链接到一块，因此整个作业就只有三个 Task：
 
-![1586410843615](/source/img/1586410843615.png)
+![1586410843615](/img/1586410843615.png)
 
 解释完 Task ，我们在解释一下什么是 SubTask，其准确的翻译是： *A subtask is one parallel slice of a task*，即一个 Task 可以按照其并行度拆分为多个 SubTask。如上图，source & map 具有两个并行度，KeyBy 具有两个并行度，Sink 具有一个并行度，因此整个虽然只有 3 个 Task，但是却有 5 个 SubTask。Jobmanager 负责定义和拆分这些 SubTask，并将其交给 Taskmanagers 来执行，每个 SubTask 都是一个单独的线程。
 
@@ -84,17 +84,17 @@ Stateful Stream Processing 是最低级别的抽象，它通过 Process Function
 
 理解了 SubTasks ，我们再来看看其与 Slots 的对应情况。一种可能的分配情况如下：
 
-![1586410901685](/source/img/1586410901685.png)
+![1586410901685](/img/1586410901685.png)
 
 这时每个 SubTask 线程运行在一个独立的 TaskSlot， 它们共享所属的 TaskManager 进程的TCP 连接（通过多路复用技术）和心跳信息 (heartbeat messages)，从而可以降低整体的性能开销。此时看似是最好的情况，但是每个操作需要的资源都是不尽相同的，这里假设该作业 keyBy 操作所需资源的数量比 Sink 多很多 ，那么此时 Sink 所在 Slot 的资源就没有得到有效的利用。
 
 基于这个原因，Flink 允许多个 subtasks 共享 slots，即使它们是不同 tasks 的 subtasks，但只要它们来自同一个 Job 就可以。假设上面 souce & map 和 keyBy 的并行度调整为 6，而 Slot 的数量不变，此时情况如下：
 
-![1586411714405](/source/img/1586411714405.png)
+![1586411714405](/img/1586411714405.png)
 
 可以看到一个 Task Slot 中运行了多个 SubTask 子任务，此时每个子任务仍然在一个独立的线程中执行，只不过共享一组 Sot 资源而已。那么 Flink 到底如何确定一个 Job 至少需要多少个 Slot 呢？Flink 对于这个问题的处理很简单，默认情况一个 Job 所需要的 Slot 的数量就等于其 Operation 操作的最高并行度。如下， A，B，D 操作的并行度为 4，而 C，E 操作的并行度为 2，那么此时整个 Job 就需要至少四个 Slots 来完成。通过这个机制，Flink 就可以不必去关心一个 Job 到底会被拆分为多少个 Tasks 和 SubTasks。
 
-![1586411745166](/source/img/1586411745166.png)
+![1586411745166](/img/1586411745166.png)
 
 ### Flink 优势
 
@@ -103,11 +103,7 @@ Stateful Stream Processing 是最低级别的抽象，它通过 Process Function
 - 支持有状态计算的Exactly-once语义
 - 提供DataStream API和DataSet API
 
-![1586489825589](/source/img/1586489825589.png)
-
-
-
-
+![1586489825589](/img/1586489825589.png)
 
 ### Source 和 sink
 
@@ -151,7 +147,7 @@ Exception in thread "main" java.lang.IllegalArgumentException: Source: 1 is not 
 
 如果你想要实现具有并行度的输入流，则需要实现 ParallelSourceFunction 或 RichParallelSourceFunction 接口，其与 SourceFunction 的关系如下图： 
 
-![1586415778743](/source/img/1586415778743.png)
+![1586415778743](/img/1586415778743.png)
 
 ParallelSourceFunction 直接继承自 ParallelSourceFunction，具有并行度的功能。RichParallelSourceFunction 则继承自 AbstractRichFunction，同时实现了 ParallelSourceFunction 接口，所以其除了具有并行度的功能外，还提供了额外的与生命周期相关的方法，如 open() ，closen() 。
 
@@ -159,7 +155,7 @@ ParallelSourceFunction 直接继承自 ParallelSourceFunction，具有并行度�
 
 除了使用内置的第三方连接器外，Flink 还支持使用自定义的 Sink 来满足多样化的输出需求。想要实现自定义的 Sink ，需要直接或者间接实现 SinkFunction 接口。通常情况下，我们都是实现其抽象类 RichSinkFunction，相比于 SinkFunction ，其提供了更多的与生命周期相关的方法。两者间的关系如下：
 
- ![1586421691428](/source/img/1586421691428.png)
+ ![1586421691428](/img/1586421691428.png)
 
 这里我们以自定义一个 FlinkToMySQLSink 为例，将计算结果写出到 MySQL 数据库中，具体步骤如下：
 
@@ -261,7 +257,7 @@ env.execute();
 
 相对于其他流计算框架，Flink 一个比较重要的特性就是其支持有状态计算。即你可以将中间的计算结果进行保存，并提供给后续的计算使用：
 
-![1586424744865](/source/img/1586424744865.png)
+![1586424744865](/img/1586424744865.png)
 
 具体而言，Flink 又将状态 (State) 分为 Keyed State 与 Operator State：
 
@@ -269,13 +265,13 @@ env.execute();
 
 算子状态 (Operator State)：顾名思义，状态是和算子进行绑定的，一个算子的状态不能被其他算子所访问到。官方文档上对 Operator State 的解释是：*each operator state is bound to one parallel operator instance*，所以更为确切的说一个算子状态是与一个并发的算子实例所绑定的，即假设算子的并行度是 2，那么其应有两个对应的算子状态：
 
-![1586425914911](/source/img/1586425914911.png)
+![1586425914911](/img/1586425914911.png)
 
 #### 键控状态
 
 键控状态 (Keyed State) ：是一种特殊的算子状态，即状态是根据 key 值进行区分的，Flink 会为每类键值维护一个状态实例。如下图所示，每个颜色代表不同 key 值，对应四个不同的状态实例。需要注意的是键控状态只能在 `KeyedStream` 上进行使用，我们可以通过 `stream.keyBy(...)` 来得到 `KeyedStream` 。
 
-![1586425957804](/source/img/1586425957804.png)
+![1586425957804](/img/1586425957804.png)
 
 ### 检查点机制
 
@@ -313,7 +309,7 @@ env.getCheckpointConfig().setPreferCheckpointForRecovery(true);
 
 滚动窗口 (Tumbling Windows) 是指彼此之间没有重叠的窗口。例如：每隔1小时统计过去1小时内的商品点击量，那么 1 天就只能分为 24 个窗口，每个窗口彼此之间是不存在重叠的，具体如下：
 
-![1586422308463](/source/img/1586422308463.png)
+![1586422308463](/img/1586422308463.png)
 
 1. 这里我们以词频统计为例，给出一个具体的用例，代码如下：
 
@@ -333,8 +329,6 @@ env.getCheckpointConfig().setPreferCheckpointForRecovery(true);
    env.execute("Flink Streaming");
    ```
 
-   测试结果如下：
-
 2. 假如我们需要统计每一分钟中用户购买的商品的总数，需要将用户的行为事件按每一分钟进行切分，这种切分被成为翻滚时间窗口（Tumbling Time Window）。翻滚窗口能将数据流切分成不重叠的窗口，每一个事件只能属于一个窗口。
 
    ```java
@@ -353,7 +347,7 @@ env.getCheckpointConfig().setPreferCheckpointForRecovery(true);
 
 滑动窗口用于滚动进行聚合分析，例如：每隔 6 分钟统计一次过去一小时内所有商品的点击量，那么统计窗口彼此之间就是存在重叠的，即 1天可以分为 240 个窗口。图示如下：
 
-![1586422565315](/source/img/1586422565315.png)
+![1586422565315](/img/1586422565315.png)
 
 可以看到 window 1 - 4 这四个窗口彼此之间都存在着时间相等的重叠部分。想要实现滑动窗口，只需要在使用 timeWindow 方法时额外传递第二个参数作为滚动时间即可，具体如下：
 
@@ -366,7 +360,7 @@ keyBy(0).timeWindow(Time.minutes(1),Time.seconds(3)).sum(1)
 
 当用户在进行持续浏览时，可能每时每刻都会有点击数据，例如在活动区间内，用户可能频繁的将某类商品加入和移除购物车，而你只想知道用户本次浏览最终的购物车情况，此时就可以在用户持有的会话结束后再进行统计。想要实现这类统计，可以通过 Session Windows 来进行实现。
 
-![1586423597586](/source/img/1586423597586.png)
+![1586423597586](/img/1586423597586.png)
 
 具体的实现代码如下：
 
@@ -381,7 +375,7 @@ window(EventTimeSessionWindows.withGap(Time.seconds(10)))
 
 最后一个窗口是全局窗口， 全局窗口会将所有 key 相同的元素分配到同一个窗口中，其通常配合触发器 (trigger) 进行使用。如果没有相应触发器，则计算将不会被执行。
 
-![1586424315574](/source/img/1586424315574.png)
+![1586424315574](/img/1586424315574.png)
 
 这里继续以上面词频统计的案例为例，示例代码如下：
 
@@ -424,7 +418,7 @@ public WindowedStream<T, KEY, GlobalWindow> countWindow(long size, long slide) {
 - 如果以IngesingtTime为基准来定义时间窗口将形成IngestingTimeWindow,以source的systemTime为准。
 - 如果以ProcessingTime基准来定义时间窗口将形成ProcessingTimeWindow，以operator的systemTime为准。
 
-![1586577084774](/source/img/1586577084774.png)
+![1586577084774](/img/1586577084774.png)
 
 #### 时间详解
 
@@ -444,12 +438,12 @@ Ingestion Time 是事件进入 Flink 的时间。 在源操作处，每个事件
 
 在介绍Watermark相关内容之前我们先抛出一个具体的问题，在实际的流式计算中数据到来的顺序对计算结果的正确性有至关重要的影响，比如：某数据源中的某些数据由于某种原因(如：网络原因，外部存储自身原因)会有5秒的延时，也就是在实际时间的第1秒产生的数据有可能在第5秒中产生的数据之后到来(比如到Window处理节点).选具体某个delay的元素来说，假设在一个5秒的Tumble窗口(详见Window介绍章节)，有一个EventTime是 11秒的数据，在第16秒时候到来了。图示第11秒的数据，在16秒到来了，如下图：
 
-![1586589440002](/source/img/1586589440002.png)
+![1586589440002](/img/1586589440002.png)
 
 那么对于一个Count聚合的Tumble(5s)的window，上面的情况如何处理才能window2=4，window3=2 呢？Apache Flink的时间类型
 开篇我们描述的问题是一个很常见的TimeWindow中数据乱序的问题，乱序是相对于事件产生时间和到达Apache Flink 实际处理算子的顺序而言的，关于时间在Apache Flink中有如下三种时间类型，如下图：
 
-![1586589447529](/source/img/1586589447529.png)
+![1586589447529](/img/1586589447529.png)
 
 那么对于一个Count聚合的Tumble(5s)的window，上面的情况如何处理才能window2=4，window3=2 呢？
 
@@ -457,7 +451,7 @@ Ingestion Time 是事件进入 Flink 的时间。 在源操作处，每个事件
 
 Watermark是Apache Flink为了处理EventTime 窗口计算提出的一种机制,本质上也是一种时间戳，由Apache Flink Source或者自定义的Watermark生成器按照需求Punctuated或者Periodic两种方式生成的一种系统Event，与普通数据流Event一样流转到对应的下游算子，接收到Watermark Event的算子以此不断调整自己管理的EventTime clock。 Apache Flink 框架保证Watermark单调递增，算子接收到一个Watermark时候，框架知道不会再有任何小于该Watermark的时间戳的数据元素到来了，所以Watermark可以看做是告诉Apache Flink框架数据流已经处理到什么位置(时间维度)的方式。 Watermark的产生和Apache Flink内部处理逻辑如下图所示: 
 
-![1586589616212](/source/img/1586589616212.png)
+![1586589616212](/img/1586589616212.png)
 
 #### Watermark的产生方式
 
@@ -560,7 +554,7 @@ long extractTimestamp(T element, long previousElementTimestamp);
 
 - 当Watermark的时间戳等于Event中携带的EventTime时候，上面场景（Watermark=EventTime)的计算结果如下：
 
-![1586590446371](/source/img/1586590446371.png)
+![1586590446371](/img/1586590446371.png)
 
  上面对应的DDL(Alibaba 企业版的Flink分支)定义如下：
 
@@ -576,7 +570,7 @@ WATERMARK wk1 FOR Event_time as withOffset(Event_time, 0)
 
 - 如果想正确处理迟来的数据可以定义Watermark生成策略为 Watermark = EventTime -5s， 如下：
 
-![1586590568191](/source/img/1586590568191.png)
+![1586590568191](/img/1586590568191.png)
 
 上面对应的DDL(Alibaba 内部的DDL语法，目前正在和社区讨论)定义如下： 
 
@@ -596,11 +590,11 @@ WATERMARK wk1 FOR Event_time as withOffset(Event_time, 5000)
 
 在实际的流计算中往往一个job中会处理多个Source的数据，对Source的数据进行GroupBy分组，那么来自不同Source的相同key值会shuffle到同一个处理节点，并携带各自的Watermark，Apache Flink内部要保证Watermark要保持单调递增，多个Source的Watermark汇聚到一起时候可能不是单调自增的，这样的情况Apache Flink内部是如何处理的呢？如下图所示：
 
-![1586591065285](/source/img/1586591065285.png)
+![1586591065285](/img/1586591065285.png)
 
 Apache Flink内部实现每一个边上只能有一个递增的Watermark， 当出现多流携带Eventtime汇聚到一起(GroupBy or Union)时候，Apache Flink会选择所有流入的Eventtime中最小的一个向下游流出。从而保证watermark的单调递增和保证数据的完整性.如下图: 
 
-![1586591258097](/source/img/1586591258097.png)
+![1586591258097](/img/1586591258097.png)
 
 本节以一个流计算常见的乱序问题介绍了Apache Flink如何利用Watermark机制来处理乱序问题. 本篇内容在一定程度上也体现了EventTime Window中的Trigger机制依赖了Watermark(后续Window篇章会介绍)。Watermark机制是流计算中处理乱序，正确处理Late Event的核心手段。
 
@@ -668,7 +662,7 @@ public class EventTimeDemo {
 
 **测试结果**
 
-![1586583564019](/source/img/1586583564019.png)
+![1586583564019](/img/1586583564019.png)
 
 > **结果分析**
 > 备注： (1581490623000转换后为：2020-02-12 14:57:03
@@ -762,7 +756,7 @@ public class EventTimeDemo {
 
 2. 创建 Topic 成功截图(点击放大查看)：
 
-   ![1586583578404](/source/img/1586583578404.png)
+   ![1586583578404](/img/1586583578404.png)
 
 3. 使用命令，写入数据到Kafka：
 
@@ -782,7 +776,7 @@ public class EventTimeDemo {
 
 4. 测试结果：
 
-   ![1586583590046](/source/img/1586583590046.png)
+   ![1586583590046](/img/1586583590046.png)
 
 #### 结果分析
 
@@ -792,4 +786,4 @@ public class EventTimeDemo {
 
 ​	那这是为什么呢？这是 并行Source 和 非并行Source 的原因导致的（这里涉及到 KafkaSource 创建的 topic，有 3 个分区的原因，如下图所示）
 
-![1586584999171](/source/img/1586584999171.png)
+![1586584999171](/img/1586584999171.png)

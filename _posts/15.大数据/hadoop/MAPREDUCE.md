@@ -3,10 +3,10 @@ title: MAPREDUCE
 date: "2020-01-10 15:20:00"
 categories:
 - 大数据
-- Hadoop
-tags:
-- 大数据
 - hadoop
+tags:
+- hadoop
+- 大数据
 toc: true
 typora-root-url: ..\..\..
 ---

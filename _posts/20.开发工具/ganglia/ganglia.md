@@ -4,8 +4,6 @@ date: "2018-10-09 22:00:00"
 categories:
 - 开发工具
 - ganglia
-tags:
-- true
 toc: true
 typora-root-url: ..\..\..\
 ---

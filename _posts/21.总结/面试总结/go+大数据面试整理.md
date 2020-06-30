@@ -1548,6 +1548,31 @@ mysql 进行is null 查询会使用索引的，  进行  not  null  判断则不
 
 8、rows  预估结果集的条数，可能不一定完全准确
 
+9、extra   包含额外的信息。
+
+​	a:   using filesort:       说明mysql无法利用索引进行排序，只能利用排序算法进行排序，会消耗额外的位置
+
+​		explain select * from emp order by sal;
+
+​	b:   using temporary:    建立临时表来保存中间结果，查询完成之后把临时表删除
+
+​		explain select ename,count(*) from emp where deptno = 10 group by ename;
+
+​	c:   using index:     这个表示当前的查询时覆盖索引的，直接从索引中读取数据，而不用访问数据表。如果同时出现using where 表名索引被用来执行索引键值的查找，如果没有，表面索引被用来读取数据，而不是真的查找
+
+​		explain select deptno,count(*) from emp group by deptno limit 10;
+
+​	d:   using where:       使用where进行条件过滤
+
+​		explain select * from t_user where id = 1;
+
+​	e:   using join buffer:      使用连接缓存
+
+​	f:    impossible where：where语句的结果总是false
+
+​		explain select * from emp where empno = 7469;
+
+
 ### Mysql 联合索引
 
 #### 联合索引的最左前缀

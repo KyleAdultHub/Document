@@ -3,10 +3,10 @@ title: hadoop HA高可用
 date: "2020-01-17 11:00:00"
 categories:
 - 大数据
-- Hadoop
+- hadoop
 tags:
 - 大数据
-- Hadoop
+- hadoop
 toc: true
 typora-root-url: ..\..\..
 ---

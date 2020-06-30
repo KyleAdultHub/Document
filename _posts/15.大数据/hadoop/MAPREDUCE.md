@@ -6,7 +6,7 @@ categories:
 - Hadoop
 tags:
 - 大数据
-- Hadoop
+- hadoop
 toc: true
 typora-root-url: ..\..\..
 ---

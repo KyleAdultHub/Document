@@ -95,6 +95,19 @@ TaskTracker：  相当于 Nodemanager  +  yarnchild
 
   解释器、编译器、优化器完成 HQL 查询语句从词法分析、语法分析、编译、优化以及查询计划的生成。生成的查询计划存储在 HDFS 中，并在随后有 MapReduce 调用执行。
 
+### Hive SQl 语句执行过程
+
+Hql写出来以后只是一些字符串的拼接，所以要经过一系列的解析处理，才能最终变成集群上的执行的作业
+
+1. Parser：将sql解析为AST（抽象语法树），会进行语法校验，AST本质还是字符串
+2. Analyzer：语法解析，生成QB（query block）
+3. Logicl Plan：逻辑执行计划解析，生成一堆Opertator Tree
+4. Logical optimizer:进行逻辑执行计划优化，生成一堆优化后的Opertator Tree
+5. Phsical plan：物理执行计划解析，生成tasktree
+6. Phsical Optimizer：进行物理执行计划优化，生成优化后的tasktree，该任务即是集群上的执行的作业
+
+- 结论：经过以上的六步，普通的字符串sql被解析映射成了集群上的执行任务，最重要的两步是 逻辑执行计划优化和物理执行计划优化（图中红线圈画）
+
 ## Hive 安装部署
 
 ### Hive三种模式
